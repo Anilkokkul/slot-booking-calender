@@ -1,4 +1,5 @@
 const Slots = require("../Model/slot.model");
+const nodemailer = require("nodemailer");
 
 exports.initializeSlots = async (m, d) => {
   try {
@@ -92,6 +93,10 @@ exports.bookingSlot = async (req, res) => {
       }
     )
       .then((data) => {
+        const time = data.startTime;
+        const name = data.name;
+        const email = data.email;
+        sendingConfirmationEmail(name, email, time);
         res.status(200).send({
           message: "Slot Booked Successfully",
           slotBooked: data,
@@ -110,3 +115,63 @@ exports.bookingSlot = async (req, res) => {
     });
   }
 };
+
+async function sendingConfirmationEmail(name, email, time) {
+  try {
+    const dateTime = new Date(time);
+    const options = {
+      timeZone: "UTC",
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const formattedDateTime = dateTime.toLocaleString(undefined, options);
+    let transporter = await nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "anilkokkul8076@gmail.com",
+        pass: process.env.PASS,
+      },
+    });
+
+    let mailoptions = {
+      from: "anilkokkul8076@gmail.com",
+      to: email,
+      subject: "Meeting Confirmation",
+      html: `
+      <!doctype html>
+      <html lang="en-US">
+      
+      <head>
+          <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+          <title>Reset Password Email Template</title>
+          <meta name="description" content="Reset Password Email Template.">
+          <style type="text/css">
+              a:hover {text-decoration: underline !important;}
+          </style>
+      </head>
+      
+      <body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0px; background-color: #f2f3f8;" leftmargin="0">
+          <!--100% body table-->
+          <p style="font-size: 16px; color: #333; margin-bottom: 10px;">
+  Dear ${name},
+</p>
+<p style="font-size: 14px; color: #555; margin-bottom: 15px;">
+  Your meeting on ${formattedDateTime} has been confirmed Successfully.
+</p>
+<p style="font-size: 14px; color: #555;">
+  Thank you for using our slot booking service.
+</p>
+      </body>
+      
+      </html>`,
+    };
+
+    await transporter.sendMail(mailoptions);
+  } catch (error) {
+    console.log("Error while sending email: Internal Server Error", error);
+  }
+}
