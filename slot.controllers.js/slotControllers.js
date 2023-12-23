@@ -1,10 +1,10 @@
 const Slots = require("../Model/slot.model");
 
-exports.initializeSlots = async () => {
+exports.initializeSlots = async (m, d) => {
   try {
-    const month = 12;
-    const year = 2023;
-    const days = 31;
+    const month = m;
+    const year = 2024;
+    const days = d;
 
     const timeSlots = [
       { start: "10:00", end: "10:45" },
@@ -20,6 +20,7 @@ exports.initializeSlots = async () => {
       const date = new Date(`${year}-${month}-${day}`);
 
       for (let timeSlot of timeSlots) {
+        slotDate = date;
         const startDateTime = new Date(
           `${date.toISOString().split("T")[0]}T${timeSlot.start}:00.000Z`
         );
@@ -27,7 +28,6 @@ exports.initializeSlots = async () => {
           `${date.toISOString().split("T")[0]}T${timeSlot.end}:00.000Z`
         );
         const slot = new Slots({
-          date: startDateTime,
           startTime: startDateTime,
           endTime: endDateTime,
         });
@@ -45,7 +45,7 @@ exports.getAvailableSlots = async (req, res) => {
       .then((data) => {
         res.status(200).send({
           message: "Slots Retrieved Successfully",
-          Notes: data,
+          Slots: data,
         });
       })
       .catch((error) => {
@@ -65,18 +65,18 @@ exports.getAvailableSlots = async (req, res) => {
 exports.bookingSlot = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, mobileNumber, email,  available } = req.body;
+    const { name, mobileNumber, email, available } = req.body;
 
     const slot = await Slots.findOne({ _id: id });
 
     if (!slot) {
       return res.status(404).send({
-        Message: "No such Slot available",
+        message: "No such Slot available",
       });
     }
     if (slot.available === false) {
       return res.status(409).send({
-        Message: "This slot is not available.",
+        message: "This slot is not available.",
       });
     }
     await Slots.findByIdAndUpdate(

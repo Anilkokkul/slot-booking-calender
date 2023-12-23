@@ -9,7 +9,8 @@ const router = express.Router();
 
 router.get("/create/slots", async (req, res) => {
   try {
-    await initializeSlots();
+    const { month, days } = req.body;
+    await initializeSlots(month, days);
     res
       .status(201)
       .json({ message: "Slot creation process has been initialized" });
