@@ -6,15 +6,15 @@ const app = express();
 require("dotenv").config();
 
 db();
-// const corsOptions = {
-//   origin: [
-//     "http://localhost:3000",
-//     "https://brilliant-salmiakki-fae0bf.netlify.app",
-//   ],
-//   credentials: true,
-//   methods: ["GET", "POST", "DELETE", "PUT"],
-// };
-app.use(cors());
+const corsOptions = {
+  origin: [
+    // "http://localhost:3000",
+    "https://brilliant-salmiakki-fae0bf.netlify.app",
+  ],
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(slotRoutes);
 
