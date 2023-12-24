@@ -4,6 +4,10 @@ const {
   getAvailableSlots,
   bookingSlot,
 } = require("../slot.controllers.js/slotControllers");
+const {
+  createOrderId,
+  paymentCapture,
+} = require("../slot.controllers.js/payment.controllers");
 
 const router = express.Router();
 
@@ -25,5 +29,10 @@ router.get("/create/slots", async (req, res) => {
 router.get("/slots", getAvailableSlots);
 
 router.put("/slot/booking/:id", bookingSlot);
+
+router.post("/order", createOrderId);
+
+//to update payment details in database for now we just consoling them
+router.post("/payment", paymentCapture);
 
 module.exports = router;

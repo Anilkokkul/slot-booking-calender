@@ -5,10 +5,6 @@ const slotRoutes = require("./routes/slotRoutes");
 const app = express();
 require("dotenv").config();
 
-const {
-  createOrderId,
-  paymentCapture,
-} = require("./slot.controllers.js/payment.controllers");
 db();
 const corsOptions = {
   origin: [
@@ -21,11 +17,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(slotRoutes);
-
-app.post("/order", createOrderId);
-
-//to update payment details in database for now we just consoling them
-app.post("/payment", paymentCapture);
 
 const port = 8000;
 
