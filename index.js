@@ -8,7 +8,7 @@ require("dotenv").config();
 db();
 const corsOptions = {
   origin: [
-    // "http://localhost:3000",
+    "http://localhost:3000",
     "https://brilliant-salmiakki-fae0bf.netlify.app",
   ],
   credentials: true,
